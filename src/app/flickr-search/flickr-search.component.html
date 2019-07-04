@@ -1,0 +1,30 @@
+<div class="container">
+    <nav class="navbar navbar-light bg-light">
+        <span class="navbar-brand mb-0 h4" (click)="saveSearch(txtKeyWord.value)">Save search</span>
+        <span class="navbar-brand mb-1 h4" (click)="openSavedSearches()">Load saved searches</span>
+       </nav>
+  <div class="row">
+     <div class="offset-5">
+       <h1>Image Gallery</h1>
+     </div>
+  </div>
+  <div class="row">
+    <div class="offset-4 col-5">
+      <div class="form-group">
+        <input type="text" class="form-control" (keydown.enter)="doRequest(txtKeyWord.value)" #txtKeyWord>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="offset-4 col-5">
+      <button class="btn btn-primary w-100" (click)="saveSearch(txtKeyWord.value)">Save Search</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-3" *ngFor="let flickrResult of flickrResultArr ">
+        <img class="img-thumbnail img-responsive" [src]="imgUrl(flickrResult)" style="max-height:300px">
+    </div>
+  </div>
+</div>
