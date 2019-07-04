@@ -1,0 +1,14 @@
+<div class="modal-header">
+  <h4 class="modal-title">Saved searches</h4>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body">
+  <div style="height:30vh;">
+  <div class="checkbox" *ngFor="let savedSearch of savedSearchesArr">
+    <label><input type="checkbox" value="" class="mr-4">{{savedSearch.text}}</label>
+  </div>
+  </div>
+  <button class="btn btn-primary w-100">Show selected serches results</button>
+</div>

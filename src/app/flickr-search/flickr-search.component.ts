@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Http } from '@angular/http';
 import { IflickrResult, ISavedSearch } from '../interfaces';
+import { SavedSearchesModalComponent } from '../saved-searches-modal/saved-searches-modal.component';
+import { NgbModal } from '../../../node_modules/@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-flickr-search',
@@ -10,7 +12,7 @@ import { IflickrResult, ISavedSearch } from '../interfaces';
 export class FlickrSearchComponent implements OnInit {
 
   private flickrResultArr: IflickrResult[] = [];
-  constructor(private http: Http) { }
+  constructor(private http: Http, private modalService: NgbModal) { }
 
   ngOnInit() {
   }
@@ -49,7 +51,8 @@ export class FlickrSearchComponent implements OnInit {
   }
 
   public openSavedSearches() {
-    alert(this.getSavedSearches().length);
+    const modalRef = this.modalService.open(SavedSearchesModalComponent, {centered: true});
+    modalRef.componentInstance.savedSearchesArr = this.getSavedSearches();
   }
 
 }
