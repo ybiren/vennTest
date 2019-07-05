@@ -1,13 +1,35 @@
 <div class="container">
-  <button type="submit" class="btn btn-primary mr-4" *ngIf="flickrResultArr && flickrResultArr.length && !isDisplaySavedMode" (click)="saveSearch(txtKeyWord.value)">Save search</button>
-  <button type="submit" class="btn btn-primary"  (click)="openSavedSearches()">Load saved searches</button>
+  <div id="searchOps">
+    <div class="form-group">
+    <button type="submit" class="btn btn-primary mr-4" *ngIf="flickrResultArr && flickrResultArr.length && !isDisplaySavedMode" (click)="saveSearch(txtKeyWord.value)">Save search</button>
+    <button type="submit" class="btn btn-primary mr-4"  (click)="openSavedSearches()">Load saved searches</button>
+    </div>
+  </div>
+
+  <div class="alert alert-success alert-dismissible fade show" *ngIf="displaySuccessAlert" >
+      Search has been saved successfully.
+      <button type="button" class="close" data-dismiss="alert" (click)="displaySuccessAlert=false;">&times;</button>
+  </div>
+
+  <div class="alert alert-danger alert-dismissible fade show" *ngIf="displayErrorAlert" >
+      An error has occured.
+      <button type="button" class="close" data-dismiss="alert" (click)="displayErrorAlert=false;">&times;</button>
+  </div>
+
   <div class="row">
      <div class="offset-5">
-       <h1>Image Gallery</h1><h2>erer</h2>
+       <h1>Image Gallery</h1>
      </div>
   </div>
+
+  <div class="row" *ngIf="isDisplaySavedMode">
+    <div class="offset-5">
+      <h3 id="savedModeLabel">Displaying saved search</h3>
+    </div>
+  </div>
+
   <div class="row">
-    <div class="offset-4 col-5">
+    <div class="offset-4 col-6">
       <div class="form-group">
         <input type="text" class="form-control" (keydown.enter)="doRequest(txtKeyWord.value)" #txtKeyWord>
       </div>
@@ -18,7 +40,7 @@
        class="row search-results" infiniteScroll [infiniteScrollDistance]="2"
        [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
     <div class="col-3" *ngFor="let flickrResult of flickrResultArr ">
-        <img class="img-thumbnail img-responsive" [src]="imgUrl(flickrResult)">
+        <img class="img-thumbnail img-responsive" [src]="photoUrl(flickrResult)">
     </div>
   </div>
 </div>

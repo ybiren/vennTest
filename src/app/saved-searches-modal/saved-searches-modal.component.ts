@@ -16,10 +16,13 @@ export class SavedSearchesModalComponent implements OnInit {
   ngOnInit() {
   }
 
+  // Filter display of saved searches by user selection
   getSelectedSavedSearches() {
     const resultArr: IflickrResult[] = [];
-    const arr = this.savedSearchesArr.filter(obj => obj.selected).map(obj => obj.resultArr);
-    arr.forEach((obj: IflickrResult[]) => resultArr.push(...obj));
+    // Filter saved searches
+    const arr = this.savedSearchesArr.filter((search: ISavedSearch) => search.selected).map(search => search.resultArr);
+    // Unite filtered searches to one array
+    arr.forEach((item: IflickrResult[]) => resultArr.push(...item));
     this.activeModal.close(resultArr);
   }
 

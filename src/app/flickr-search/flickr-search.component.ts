@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Http } from '@angular/http';
 import { IflickrResult, ISavedSearch } from '../interfaces';
 import { SavedSearchesModalComponent } from '../saved-searches-modal/saved-searches-modal.component';
 import { NgbModal } from '../../../node_modules/@ng-bootstrap/ng-bootstrap';
+import { FlickrSvcService } from '../flickr-svc.service';
 
 @Component({
   selector: 'app-flickr-search',
@@ -11,36 +11,42 @@ import { NgbModal } from '../../../node_modules/@ng-bootstrap/ng-bootstrap';
 })
 export class FlickrSearchComponent implements OnInit {
 
-  private flickrResultArr: IflickrResult[] = [];
-  private flickrSavedResultArr: IflickrResult[] = [];
-  private page: number;
-  private totalpages: number;
-  private text: string;
-  private isDisplaySavedMode = false;
-  private numPhotosPerPage = 100;
+  private flickrResultArr: IflickrResult[] = [];  // Contains the results of flickr query
+  private flickrSavedResultArr: IflickrResult[] = []; // contains saved results
+  private page: number; // Keeps the current page
+  private totalpages: number; // Number of results total pages
+  private text: string;  // Search text
+  private isDisplaySavedMode = false; // Indicates if gallery contains online results or saved results
+  private numPhotosPerPage = 100; // Used for saved results
 
-  constructor(private http: Http, private modalService: NgbModal) { }
+  public displaySuccessAlert = false;
+  public displayErrorAlert = false;
+
+  constructor(private modalService: NgbModal,
+    private flickrSvc: FlickrSvcService) { }
 
   ngOnInit() {
   }
 
+  // Get photos from flickr by text and page
   public getPhotos() {
-    const url = `https://api.flickr.com/services/rest/?method=flickr.photos.search&safe_search=1&format=json&nojsoncallback=1&api_key=bac9f1ccfd854f27894fd47c4f01b1e8&content_type=1&is_getty=1&text=${this.text}&page=${this.page}`;
-    this.http.get(url).subscribe((res) => {
+    this.flickrSvc.GetPhotos(this.text, this.page).subscribe((res) => {
       this.totalpages = res.json().photos.pages;
       const resultsForPage = <IflickrResult[]>res.json().photos.photo;
       this.flickrResultArr.push(...resultsForPage);
     }, (error) => {
-      //to do
+      this.displayErrorAlert = true;
     });
   }
 
+  // Get nrxt numPhotosPerPage=100 from saved photos array
   private getSavedPhotos() {
     if (this.flickrSavedResultArr.length) {
        this.flickrResultArr.push(...this.flickrSavedResultArr.splice(0, this.numPhotosPerPage));
     }
   }
 
+  // Get first page of photos for searched text
   public doRequest(text: string) {
     this.page = 1;
     this.text = text;
@@ -49,31 +55,27 @@ export class FlickrSearchComponent implements OnInit {
     this.getPhotos();
   }
 
-
-  public imgUrl(flickrResult: IflickrResult) {
+  // photo url - https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
+  public photoUrl(flickrResult: IflickrResult) {
     return `https://farm${flickrResult.farm}.staticflickr.com/${flickrResult.server}/${flickrResult.id}_${flickrResult.secret}.jpg`;
   }
 
+  // Save search by adding its results to local storage
   public saveSearch(text: string) {
-
     if (this.flickrResultArr.length) {
-      const search: ISavedSearch = {text: text, resultArr: this.flickrResultArr};
-      const savedSearchesArr: ISavedSearch[] = this.getSavedSearches();
-      savedSearchesArr.push(search);
-      localStorage.setItem('flickr_saved1', JSON.stringify(savedSearchesArr));
+      this.flickrSvc.SaveSearch('flickr_saved1', text, this.flickrResultArr);
+      this.displaySuccessAlert = true;
+      setTimeout(() => {this.displaySuccessAlert = false;
+      } , 3000);
     }
   }
 
+  // Get saved searches from local storage
   public getSavedSearches(): ISavedSearch[] {
-
-    let savedSearchesArr: ISavedSearch[] = [];
-    const savedSearchesStr = localStorage.getItem('flickr_saved1');
-    if (savedSearchesStr) {
-      savedSearchesArr = <ISavedSearch[]>JSON.parse(savedSearchesStr);
-    }
-    return savedSearchesArr;
+    return this.flickrSvc.GetSavedSearches('flickr_saved1');
   }
 
+  // Open saved searches modal dialog
   public openSavedSearches() {
     const modalRef = this.modalService.open(SavedSearchesModalComponent, {centered: true, backdrop: 'static'});
     modalRef.componentInstance.savedSearchesArr = this.getSavedSearches();
@@ -85,13 +87,14 @@ export class FlickrSearchComponent implements OnInit {
     });
   }
 
+  // Called when load more photos is needed according to infinite scroll position
   onScroll() {
-    if(!this.isDisplaySavedMode) {
-      if (this.page < this.totalpages) {
+    if (!this.isDisplaySavedMode) {
+      if (this.page < this.totalpages) { // Get next page of photos
         this.page = this.page + 1;
         this.getPhotos();
       }
-    } else {
+    } else { // Get next page of saved photos
       this.getSavedPhotos();
     }
   }

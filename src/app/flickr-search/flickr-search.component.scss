@@ -7,5 +7,18 @@
   &.is-display-saved-mode {
     background: silver;
   }
+}
 
+#searchOps {
+  button {
+    cursor: pointer;
+  }
+}
+
+.alert {
+  margin-top: 10px;
+}
+
+#savedModeLabel {
+  color: silver;
 }

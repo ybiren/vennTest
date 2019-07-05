@@ -7,6 +7,7 @@ import { SavedSearchesModalComponent } from './saved-searches-modal/saved-search
 import { NgbModalModule } from '../../node_modules/@ng-bootstrap/ng-bootstrap';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { FormsModule } from '@angular/forms';
+import { FlickrSvcService } from '../app/flickr-svc.service'
 
 @NgModule({
   declarations: [
@@ -21,7 +22,7 @@ import { FormsModule } from '@angular/forms';
     InfiniteScrollModule,
     FormsModule
   ],
-  providers: [],
+  providers: [FlickrSvcService],
   bootstrap: [AppComponent],
   entryComponents: [
     SavedSearchesModalComponent
