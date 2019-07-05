@@ -5,10 +5,10 @@
   </button>
 </div>
 <div class="modal-body">
-  <div style="height:30vh;">
-  <div class="checkbox" *ngFor="let savedSearch of savedSearchesArr">
-    <label><input type="checkbox" value="" class="mr-4">{{savedSearch.text}}</label>
-  </div>
-  </div>
-  <button class="btn btn-primary w-100">Show selected serches results</button>
+  <div>
+    <div class="checkbox" *ngFor="let savedSearch of savedSearchesArr">
+      <label><input type="checkbox"  [(ngModel)]="savedSearch.selected"  class="mr-4">{{savedSearch.text}}</label>
+    </div>
+ </div>
+  <button class="btn btn-primary w-100" (click)="getSelectedSavedSearches()">Show selected serches results</button>
 </div>

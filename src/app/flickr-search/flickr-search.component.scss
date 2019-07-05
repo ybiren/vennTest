@@ -1,0 +1,11 @@
+.search-results{
+  height : calc(100vh - 200px);
+  overflow-y: scroll;
+  img {
+    max-height:300px
+  }
+  &.is-display-saved-mode {
+    background: silver;
+  }
+
+}

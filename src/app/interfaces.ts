@@ -9,4 +9,5 @@ export interface IflickrResult {
 export interface ISavedSearch {
   text: string;
   resultArr: IflickrResult[];
+  selected?: boolean;
 }

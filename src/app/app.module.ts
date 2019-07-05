@@ -5,7 +5,8 @@ import { FlickrSearchComponent } from './flickr-search/flickr-search.component';
 import { HttpModule } from '@angular/http';
 import { SavedSearchesModalComponent } from './saved-searches-modal/saved-searches-modal.component';
 import { NgbModalModule } from '../../node_modules/@ng-bootstrap/ng-bootstrap';
-
+import { InfiniteScrollModule } from 'ngx-infinite-scroll';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,9 @@ import { NgbModalModule } from '../../node_modules/@ng-bootstrap/ng-bootstrap';
   imports: [
     BrowserModule,
     HttpModule,
-    NgbModalModule
+    NgbModalModule,
+    InfiniteScrollModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent],

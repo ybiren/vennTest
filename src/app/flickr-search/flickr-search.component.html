@@ -1,11 +1,9 @@
 <div class="container">
-    <nav class="navbar navbar-light bg-light">
-        <span class="navbar-brand mb-0 h4" (click)="saveSearch(txtKeyWord.value)">Save search</span>
-        <span class="navbar-brand mb-1 h4" (click)="openSavedSearches()">Load saved searches</span>
-       </nav>
+  <button type="submit" class="btn btn-primary mr-4" *ngIf="flickrResultArr && flickrResultArr.length && !isDisplaySavedMode" (click)="saveSearch(txtKeyWord.value)">Save search</button>
+  <button type="submit" class="btn btn-primary"  (click)="openSavedSearches()">Load saved searches</button>
   <div class="row">
      <div class="offset-5">
-       <h1>Image Gallery</h1>
+       <h1>Image Gallery</h1><h2>erer</h2>
      </div>
   </div>
   <div class="row">
@@ -16,15 +14,11 @@
     </div>
   </div>
 
-  <div class="row">
-    <div class="offset-4 col-5">
-      <button class="btn btn-primary w-100" (click)="saveSearch(txtKeyWord.value)">Save Search</button>
-    </div>
-  </div>
-
-  <div class="row">
+  <div [ngClass]="{'is-display-saved-mode':isDisplaySavedMode}"
+       class="row search-results" infiniteScroll [infiniteScrollDistance]="2"
+       [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
     <div class="col-3" *ngFor="let flickrResult of flickrResultArr ">
-        <img class="img-thumbnail img-responsive" [src]="imgUrl(flickrResult)" style="max-height:300px">
+        <img class="img-thumbnail img-responsive" [src]="imgUrl(flickrResult)">
     </div>
   </div>
 </div>

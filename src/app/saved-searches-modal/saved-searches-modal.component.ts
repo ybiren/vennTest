@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ISavedSearch } from '../interfaces';
+import { ISavedSearch, IflickrResult } from '../interfaces';
 import { NgbActiveModal } from '../../../node_modules/@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -14,6 +14,13 @@ export class SavedSearchesModalComponent implements OnInit {
   constructor(public activeModal: NgbActiveModal) { }
 
   ngOnInit() {
+  }
+
+  getSelectedSavedSearches() {
+    const resultArr: IflickrResult[] = [];
+    const arr = this.savedSearchesArr.filter(obj => obj.selected).map(obj => obj.resultArr);
+    arr.forEach((obj: IflickrResult[]) => resultArr.push(...obj));
+    this.activeModal.close(resultArr);
   }
 
 }
