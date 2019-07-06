@@ -10,5 +10,5 @@
       <label><input type="checkbox"  [(ngModel)]="savedSearch.selected"  class="mr-4">{{savedSearch.text}}</label>
     </div>
  </div>
-  <button class="btn btn-primary w-100" (click)="getSelectedSavedSearches()">Show selected serches results</button>
+  <button *ngIf="savedSearchesArr && savedSearchesArr.length" class="btn btn-primary w-100" (click)="getSelectedSavedSearches()">Show selected serches results</button>
 </div>

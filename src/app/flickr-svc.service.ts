@@ -13,12 +13,13 @@ export class FlickrSvcService {
   private flickrBaseUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&safe_search=1&
                            format=json&nojsoncallback=1&api_key=bac9f1ccfd854f27894fd47c4f01b1e8&content_type=1&is_getty=1`;
 
-
+ // Given text for search & page number ,excecutes http request to flickr
   public GetPhotos(text: string, page: number) {
     const flickrUrl = `${this.flickrBaseUrl}&text=${text}&page=${page}`;
     return this.http.get(flickrUrl);
   }
 
+  //save searches in local storage
   public SaveSearch(key: string, text: string, flickrResultArr: IflickrResult[]) {
     const search: ISavedSearch = {text: text, resultArr: flickrResultArr};
     const savedSearchesArr: ISavedSearch[] = this.GetSavedSearches(key);

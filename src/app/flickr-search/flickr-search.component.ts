@@ -18,6 +18,7 @@ export class FlickrSearchComponent implements OnInit {
   private text: string;  // Search text
   private isDisplaySavedMode = false; // Indicates if gallery contains online results or saved results
   private numPhotosPerPage = 100; // Used for saved results
+  private localStorageKey = 'flickr_saved';
 
   public displaySuccessAlert = false;
   public displayErrorAlert = false;
@@ -63,7 +64,7 @@ export class FlickrSearchComponent implements OnInit {
   // Save search by adding its results to local storage
   public saveSearch(text: string) {
     if (this.flickrResultArr.length) {
-      this.flickrSvc.SaveSearch('flickr_saved1', text, this.flickrResultArr);
+      this.flickrSvc.SaveSearch(this.localStorageKey, text, this.flickrResultArr);
       this.displaySuccessAlert = true;
       setTimeout(() => {this.displaySuccessAlert = false;
       } , 3000);
@@ -72,7 +73,7 @@ export class FlickrSearchComponent implements OnInit {
 
   // Get saved searches from local storage
   public getSavedSearches(): ISavedSearch[] {
-    return this.flickrSvc.GetSavedSearches('flickr_saved1');
+    return this.flickrSvc.GetSavedSearches(this.localStorageKey);
   }
 
   // Open saved searches modal dialog
