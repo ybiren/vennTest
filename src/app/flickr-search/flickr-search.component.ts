@@ -3,6 +3,8 @@ import { IflickrResult, ISavedSearch } from '../interfaces';
 import { SavedSearchesModalComponent } from '../saved-searches-modal/saved-searches-modal.component';
 import { NgbModal } from '../../../node_modules/@ng-bootstrap/ng-bootstrap';
 import { FlickrSvcService } from '../flickr-svc.service';
+import { _debounce } from 'lodash';
+
 
 @Component({
   selector: 'app-flickr-search',
@@ -19,6 +21,7 @@ export class FlickrSearchComponent implements OnInit {
   private isDisplaySavedMode = false; // Indicates if gallery contains online results or saved results
   private numPhotosPerPage = 100; // Used for saved results
   private localStorageKey = 'flickr_saved';
+  private searchDebouncer: any;
 
   public displaySuccessAlert = false;
   public displayErrorAlert = false;
@@ -40,11 +43,17 @@ export class FlickrSearchComponent implements OnInit {
     });
   }
 
-  // Get nrxt numPhotosPerPage=100 from saved photos array
+  // Get next numPhotosPerPage=100 from saved photos array
   private getSavedPhotos() {
     if (this.flickrSavedResultArr.length) {
        this.flickrResultArr.push(...this.flickrSavedResultArr.splice(0, this.numPhotosPerPage));
     }
+  }
+
+  debounceRequest(text: string) {
+    const gg = () => alert(1);
+    this.searchDebouncer = _debounce(gg, 1000, true);
+    //this.searchDebouncer();
   }
 
   // Get first page of photos for searched text

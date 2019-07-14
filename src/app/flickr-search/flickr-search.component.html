@@ -31,7 +31,7 @@
   <div class="row">
     <div class="offset-4 col-6">
       <div class="form-group">
-        <input type="text" class="form-control" (keydown.enter)="doRequest(txtKeyWord.value)" #txtKeyWord>
+        <input type="text" class="form-control" (keyup)="debounceRequest(txtKeyWord.value)" (keydown.enter)="doRequest(txtKeyWord.value)" #txtKeyWord>
       </div>
     </div>
   </div>
