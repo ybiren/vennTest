@@ -39,7 +39,7 @@
   <div [ngClass]="{'is-display-saved-mode':isDisplaySavedMode}"
        class="row search-results" infiniteScroll [infiniteScrollDistance]="2"
        [infiniteScrollThrottle]="50" (scrolled)="onScroll()" [scrollWindow]="false">
-    <div class="col-3" *ngFor="let flickrResult of flickrResultArr ">
+    <div class="col-3" *ngFor="let flickrResult of flickrResultArr">
         <img class="img-thumbnail img-responsive" [src]="photoUrl(flickrResult)">
     </div>
   </div>

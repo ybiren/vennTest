@@ -1,3 +1,12 @@
+export interface Iflickr { 
+  photos: IflickrPhotos;
+}
+
+export interface IflickrPhotos {
+  pages: number;
+  photo: IflickrResult[]; 
+}
+
 export interface IflickrResult {
   id: string;
   secret: string;

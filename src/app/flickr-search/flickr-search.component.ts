@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { IflickrResult, ISavedSearch } from '../interfaces';
+import { IflickrResult, ISavedSearch, Iflickr } from '../interfaces';
 import { SavedSearchesModalComponent } from '../saved-searches-modal/saved-searches-modal.component';
 import { NgbModal } from '../../../node_modules/@ng-bootstrap/ng-bootstrap';
 import { FlickrSvcService } from '../flickr-svc.service';
-import { _debounce } from 'lodash';
+import { debounce } from 'lodash';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -13,7 +14,9 @@ import { _debounce } from 'lodash';
 })
 export class FlickrSearchComponent implements OnInit {
 
-  private flickrResultArr: IflickrResult[] = [];  // Contains the results of flickr query
+  private flickrResultObs: Observable<Iflickr>;  // Contains the results of flickr query
+  private flickrResultTotalPagesObs: Observable<number>;
+  private flickrResultArr: IflickrResult[] = [];
   private flickrSavedResultArr: IflickrResult[] = []; // contains saved results
   private page: number; // Keeps the current page
   private totalpages: number; // Number of results total pages
@@ -22,7 +25,10 @@ export class FlickrSearchComponent implements OnInit {
   private numPhotosPerPage = 100; // Used for saved results
   private localStorageKey = 'flickr_saved';
   private searchDebouncer: any;
-
+  private  requestDebouncer = debounce((text: string) => {
+    this.doRequest(text);
+  }, 500)
+  
   public displaySuccessAlert = false;
   public displayErrorAlert = false;
 
@@ -34,6 +40,7 @@ export class FlickrSearchComponent implements OnInit {
 
   // Get photos from flickr by text and page
   public getPhotos() {
+    /*
     this.flickrSvc.GetPhotos(this.text, this.page).subscribe((res) => {
       this.totalpages = res.json().photos.pages;
       const resultsForPage = <IflickrResult[]>res.json().photos.photo;
@@ -41,28 +48,44 @@ export class FlickrSearchComponent implements OnInit {
     }, (error) => {
       this.displayErrorAlert = true;
     });
+    */
   }
 
   // Get next numPhotosPerPage=100 from saved photos array
   private getSavedPhotos() {
-    if (this.flickrSavedResultArr.length) {
-       this.flickrResultArr.push(...this.flickrSavedResultArr.splice(0, this.numPhotosPerPage));
-    }
+    //if (this.flickrSavedResultArr.length) {
+       //this.flickrResultArr.push(...this.flickrSavedResultArr.splice(0, this.numPhotosPerPage));
+    //}
   }
+  
 
   debounceRequest(text: string) {
-    const gg = () => alert(1);
-    this.searchDebouncer = _debounce(gg, 1000, true);
-    //this.searchDebouncer();
+    this.requestDebouncer(text);
   }
 
   // Get first page of photos for searched text
   public doRequest(text: string) {
     this.page = 1;
     this.text = text;
-    this.flickrResultArr = [];
+    //this.flickrResultArr = [];
     this.isDisplaySavedMode = false;
-    this.getPhotos();
+    this.flickrResultTotalPagesObs = this.flickrSvc.GetTotalPages(this.text);
+    this.flickrResultObs = this.flickrSvc.GetPhotos(this.text, this.page);
+    this.flickrSvc.GetTotalPagesAndPhotoesForFirstPage(this.flickrResultTotalPagesObs,this.flickrResultObs).subscribe(([pages,flickr ]) => {
+      this.totalpages = pages;
+      this.flickrResultArr = flickr.photos.photo; 
+     });    
+    
+    /*
+    this.flickrResultTotalPagesObs.subscribe((pages: number) => {
+      this.totalpages = pages;
+      alert(this.totalpages);
+    });
+
+    this.flickrResultObs.subscribe((flickr :Iflickr) => { 
+      this.flickrResultArr = flickr.photos.photo; 
+    }); */
+  
   }
 
   // photo url - https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
@@ -72,12 +95,14 @@ export class FlickrSearchComponent implements OnInit {
 
   // Save search by adding its results to local storage
   public saveSearch(text: string) {
+    /*
     if (this.flickrResultArr.length) {
       this.flickrSvc.SaveSearch(this.localStorageKey, text, this.flickrResultArr);
       this.displaySuccessAlert = true;
       setTimeout(() => {this.displaySuccessAlert = false;
       } , 3000);
     }
+  */
   }
 
   // Get saved searches from local storage
@@ -90,7 +115,7 @@ export class FlickrSearchComponent implements OnInit {
     const modalRef = this.modalService.open(SavedSearchesModalComponent, {centered: true, backdrop: 'static'});
     modalRef.componentInstance.savedSearchesArr = this.getSavedSearches();
     modalRef.result.then((resultArr: IflickrResult[]) => {
-      this.flickrResultArr = [];
+      //this.flickrResultArr = [];
       this.flickrSavedResultArr = resultArr;
       this.isDisplaySavedMode = true;
       this.getSavedPhotos();
@@ -102,7 +127,10 @@ export class FlickrSearchComponent implements OnInit {
     if (!this.isDisplaySavedMode) {
       if (this.page < this.totalpages) { // Get next page of photos
         this.page = this.page + 1;
-        this.getPhotos();
+        this.flickrResultObs = this.flickrSvc.GetPhotos(this.text, this.page);
+        this.flickrResultObs.subscribe((flickr :Iflickr) => { 
+          this.flickrResultArr.push(...flickr.photos.photo); 
+        });
       }
     } else { // Get next page of saved photos
       this.getSavedPhotos();
